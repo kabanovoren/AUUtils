@@ -28,6 +28,7 @@ class MainForm(ctk.CTk):
 
     def button_click(self):
         print("button click")
+        print("213")
 
 
 def main():
