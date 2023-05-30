@@ -32,7 +32,7 @@ class MainForm(customtkinter.CTk):
         self.button.grid(row=2, column=0, padx=40, pady=10)
 
         self.check_connect_fdb = service.get_setting_bd()[0]
-        self.label_one = customtkinter.CTkLabel(self, text=self.check_connect_fdb)
+        self.label_one = customtkinter.CTkLabel(self, text=f"БД:{self.check_connect_fdb}")
         self.label_one.grid(row=3, column=0, padx=20, pady=10)
     #
     def run_clear_bd(self):
