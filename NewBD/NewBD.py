@@ -8,8 +8,8 @@ class MainForm(customtkinter.CTk):
         super().__init__()
         self.geometry("368x480")
         self.title("Создание новой БД ПК'Аптека-Урал'")
-
-
+        self.after(5, self.get_file())
+        self.after(10, service.get_setting_bd()[0])
         # список для выбора действий
         self.radiobutton_frame = customtkinter.CTkFrame(self)
         self.radiobutton_frame.grid(row=0, column=0, padx=(10, 10), pady=(10, 0), sticky="nsew",)
@@ -31,14 +31,18 @@ class MainForm(customtkinter.CTk):
         self.button = customtkinter.CTkButton(self, command=self.run_clear_bd)
         self.button.grid(row=2, column=0, padx=40, pady=10)
 
-        self.check_connect_fdb = service.get_setting_bd()[0]
-        self.label_one = customtkinter.CTkLabel(self, text=f"БД:{self.check_connect_fdb}")
-        self.label_one.grid(row=3, column=0, padx=20, pady=10)
+        # self.check_connect_fdb = service.get_setting_bd()[0]
+        # self.label_one = customtkinter.CTkLabel(self, text=f"БД:{self.check_connect_fdb}")
+        # self.label_one.grid(row=3, column=0, padx=20, pady=10)
     #
+    def get_file(self):
+        service.get_name(__file__)
     def run_clear_bd(self):
         # if self.radio_button_not_nalic.cget()
-        print("button click")
-        print("213")
+
+        service.get_name(__file__)
+
+
 
 
 def main():

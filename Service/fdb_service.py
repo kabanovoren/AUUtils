@@ -6,12 +6,22 @@ from pathlib import Path
 import logging
 
 
+
+def get_name(file):
+    global inifile, sqlfile, path, log_file
+    inifile = os.path.splitext(file)[0]+'.ini'
+    sqlfile = os.path.splitext(file)[0]+'.xml'
+    log_file = os.path.splitext(file)[0]+'.log'
+    path = os.path.dirname(file)
+
+
 # Создание лога
 def _create_logs(name_modul=Path(__file__).stem):
     logger = logging.getLogger(name_modul)
     logger.setLevel(logging.INFO)
     # create the logging file handler
-    fh = logging.FileHandler(f"{name_modul}.log")
+    print(globals())
+    fh = logging.FileHandler(globals()['log_file'])
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     fh.setFormatter(formatter)
     # add handler to logger object
@@ -29,6 +39,7 @@ def logs(message):
 
 
 def get_setting_bd(inifile=''):
+    print(globals())
     key = OpenKey(HKEY_CURRENT_USER, r'SOFTWARE\Aurit\По умолчанию', 0, KEY_ALL_ACCESS)
     bd_key = QueryValueEx(key, "DatabaseFile")
     bd_str = bd_key[0]
