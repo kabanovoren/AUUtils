@@ -1,8 +1,16 @@
 import os
-import Deffdb as d
-import SQL
+import Service.fdb_service as d
 import configparser as c
 import subprocess
+
+
+def all_delete():
+    pass
+
+
+def not_nalic():
+    pass
+
 
 
 def main():

@@ -5,14 +5,13 @@ from winreg import *
 from pathlib import Path
 import logging
 
-
-
-def get_name(file):
-    global inifile, sqlfile, path, log_file
+def get_name_file(file):
+    global inifile, sqlfile, path, log_file, logger
     inifile = os.path.splitext(file)[0]+'.ini'
     sqlfile = os.path.splitext(file)[0]+'.xml'
     log_file = os.path.splitext(file)[0]+'.log'
     path = os.path.dirname(file)
+    logger = _create_logs()
 
 
 # Создание лога
@@ -20,7 +19,6 @@ def _create_logs(name_modul=Path(__file__).stem):
     logger = logging.getLogger(name_modul)
     logger.setLevel(logging.INFO)
     # create the logging file handler
-    print(globals())
     fh = logging.FileHandler(globals()['log_file'])
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     fh.setFormatter(formatter)
@@ -28,18 +26,12 @@ def _create_logs(name_modul=Path(__file__).stem):
     logger.addHandler(fh)
     return logger
 
-
-logger = _create_logs()
-
-
 # Функция логированя
 def logs(message):
     logger.info(message)
     print(message)
 
-
 def get_setting_bd(inifile=''):
-    print(globals())
     key = OpenKey(HKEY_CURRENT_USER, r'SOFTWARE\Aurit\По умолчанию', 0, KEY_ALL_ACCESS)
     bd_key = QueryValueEx(key, "DatabaseFile")
     bd_str = bd_key[0]
@@ -86,3 +78,25 @@ def connect_fdb(setting):
 def disconnect_fdb(con):
     con.close()
     logs(f'=========Отключение от базы {con.connection.database_name}==============')
+
+
+class sql_text():
+    def __init__(self):
+        pass
+
+    def load_file_sql(self, file):
+        with open(file, 'r') as file:
+            return file.readlines()
+
+    def get_sql(self, sql):
+        file = self.load_file_sql('fdb_service.log')
+        for line in file:
+            if line == sql:
+                return sql
+def main():
+    sql = sql_text()
+    print(sql.get_sql('fdb_service'))
+
+
+if __name__ == '__main__':
+    main()
