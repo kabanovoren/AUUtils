@@ -82,20 +82,29 @@ def disconnect_fdb(con):
 
 class sql_text():
     def __init__(self):
-        pass
+        self.name_file = globals()['sqlfile']
+        self.file = self.load_file_sql()
 
-    def load_file_sql(self, file):
-        with open(file, 'r') as file:
+
+    def load_file_sql(self):
+        if not os.path.exists(self.name_file):
+            self.save_file_sql()
+        with open(self.name_file, 'r') as file:
             return file.readlines()
 
+    def save_file_sql(self):
+        with open(self.name_file, 'w') as file:
+            file.close()
     def get_sql(self, sql):
-        file = self.load_file_sql('fdb_service.log')
+        file = self.load_file_sql()
         for line in file:
             if line == sql:
                 return sql
 def main():
+    get_name_file(__file__)
     sql = sql_text()
-    print(sql.get_sql('fdb_service'))
+
+    # print(sql.get_sql('fdb_service'))
 
 
 if __name__ == '__main__':
