@@ -4,6 +4,8 @@ import configparser as c
 from winreg import *
 from pathlib import Path
 import logging
+import xml.etree.ElementTree as ET
+
 
 def get_name_file(file):
     global inifile, sqlfile, path, log_file, logger
@@ -80,7 +82,7 @@ def disconnect_fdb(con):
     logs(f'=========Отключение от базы {con.connection.database_name}==============')
 
 
-class sql_text():
+class sql():
     def __init__(self):
         self.name_file = globals()['sqlfile']
         self.file = self.load_file_sql()
@@ -88,13 +90,26 @@ class sql_text():
 
     def load_file_sql(self):
         if not os.path.exists(self.name_file):
-            self.save_file_sql()
+            self.save_file_sql(data_list=[])
         with open(self.name_file, 'r') as file:
             return file.readlines()
 
-    def save_file_sql(self):
-        with open(self.name_file, 'w') as file:
-            file.close()
+    def save_file_sql(self, data_list):
+        data = ET.Element('СписокСкриптов')
+        for line in data_list:
+            item = ET.SubElement(data, 'Скрипт')
+            name_item = ET.SubElement(item, 'НаименованиеСкрипта')
+            pos_item = ET.SubElement(item, 'ПозицияЗапуска')
+            text_item = ET.SubElement(item, 'ТекстСкрипта')
+            name_item.text = line['name_item']
+            pos_item.text = line['pos_item']
+            text_item.text =line['text_item']
+        mydata = '<?xml version="1.0" encoding="windows-1251"?>'
+        mydata = mydata + ET.tostring(data, encoding='unicode')
+
+        with open(self.name_file, "w", encoding='windows-1251') as file:
+            file.write(mydata)
+
     def get_sql(self, sql):
         file = self.load_file_sql()
         for line in file:
@@ -102,7 +117,7 @@ class sql_text():
                 return sql
 def main():
     get_name_file(__file__)
-    sql = sql_text()
+    s = sql()
 
     # print(sql.get_sql('fdb_service'))
 

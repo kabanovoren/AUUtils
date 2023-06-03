@@ -28,18 +28,32 @@ class MainForm(customtkinter.CTk):
                                                                    text="Удалить все двжиения товара,\nналичие перенести в документ ввод остатков")
         self.radio_button_not_nalic.grid(row=2, column=2, pady=10, padx=20, sticky="n")
 
-        self.button = customtkinter.CTkButton(self, command=self.run_clear_bd, text='Выполнить')
-        self.button.grid(row=2, column=0, padx=40, pady=10)
+        self.button_execute = customtkinter.CTkButton(self, command=self.run_clear_bd, text='Выполнить')
+        self.button_execute.grid(row=2, column=0, padx=40, pady=10)
 
+        self.button_script = customtkinter.CTkButton(self, command=self.open_script_frame, text='Список скриптов')
+        self.button_script.grid(row=3, column=0, padx=10, pady=10)
         self.check_connect_fdb = service.get_setting_bd()[0]
         self.label_one = customtkinter.CTkLabel(self, text=f"БД:{self.check_connect_fdb}")
-        self.label_one.grid(row=3, column=0, padx=20, pady=10)
-
+        self.label_one.grid(row=4, column=0, padx=20, pady=10)
+        self.toplevel_window = None
     def run_clear_bd(self):
         if self.radio_var.get() == 0:
             script.all_delete()
         else:
             script.not_nalic()
+    def open_script_frame(self):
+        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+            self.toplevel_window = LevelScript(self)  # create window if its None or destroyed
+        else:
+            self.toplevel_window.focus()  # if window exists focus it
+
+
+class LevelScript(customtkinter.CTkToplevel):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("400x300")
+        self.title("Список скриптов")
 
 
 def main():
