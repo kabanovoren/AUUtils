@@ -56,8 +56,8 @@ class LevelScript(customtkinter.CTkToplevel, service.sql):
         super().__init__(*args, **kwargs)
         self.geometry("800x600")
         self.title("Список скриптов")
-        sql = service.sql()
-        data = sql.load_file_sql()
+        self.sql = service.sql()
+        data = self.sql.load_file_sql()
         self.label = customtkinter.CTkLabel(self, text='Наименование скрипта', width=100)
         self.label.grid(row=0, column=0, padx=10)
         self.label2 = customtkinter.CTkLabel(self, text='Позиция запуска', width=100)
@@ -107,8 +107,7 @@ class LevelScript(customtkinter.CTkToplevel, service.sql):
                  'pos_item': entry[1].get(),
                  'text_item': entry[2].get(1.0)}
             )
-        self.name_file = service.get_name_file(__file__)[1]
-        self.save_file_sql(self.data_list)
+        self.sql.save_file_sql(self.data_list)
 
 
 

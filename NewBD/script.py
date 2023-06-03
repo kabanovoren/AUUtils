@@ -1,7 +1,10 @@
 import os
+
+import Service.fdb_service
 import Service.fdb_service as d
 import configparser as c
 import subprocess
+
 
 
 def all_delete():
@@ -16,7 +19,11 @@ def not_nalic():
 def main():
     newbd()
 
-def newbd():
+
+def newbd(delete_all=True, ):
+    con = d.connect_fdb()
+
+def newbd2():
     # входящие переменные (пока тут, может перенесу)
     delete_all = int(input(
         'Удалить все данные? (0 - удаляем движение, наличие переносится в документ, 1 - удалить все наличие и движение)'))
