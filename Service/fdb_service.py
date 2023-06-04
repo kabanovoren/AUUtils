@@ -91,8 +91,17 @@ class sql():
     def load_file_sql(self):
         if not os.path.exists(self.name_file):
             self.save_file_sql(data_list=[])
-        with open(self.name_file, 'r') as file:
-            return file.readlines()
+        tree = ET.parse(self.name_file)
+        root = tree.getroot()
+        items = root.findall("Скрипт")
+        data = []
+        for chield in items:
+            name_item = chield.find("НаименованиеСкрипта").text
+            pos_item = chield.find("ПозицияЗапуска").text
+            text_item = chield.find("ТекстСкрипта").text
+            data.append({"name_item": name_item, "pos_item":pos_item, "text_item":text_item})
+        return data
+
 
     def save_file_sql(self, data_list):
         data = ET.Element('СписокСкриптов')
@@ -118,7 +127,10 @@ class sql():
 def main():
     get_name_file(__file__)
     s = sql()
-
+    s.save_file_sql([{'name_item':'fdsf','pos_item':'fdafd','text_item':'qwerer'},
+                     {'name_item':'Второй пример','pos_item':'1,2','text_item':'select * from prep where id_prep =34'}])
+    data = s.load_file_sql()
+    print(data)
     # print(sql.get_sql('fdb_service'))
 
 

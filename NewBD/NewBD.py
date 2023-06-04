@@ -54,7 +54,23 @@ class LevelScript(customtkinter.CTkToplevel):
         super().__init__(*args, **kwargs)
         self.geometry("400x300")
         self.title("Список скриптов")
+        sql = service.sql()
+        data = sql.load_file_sql()
+        n = 0
+        for item in data:
+            self.label = customtkinter.CTkLabel(self, text=item["name_item"])
+            self.label.grid(row=n, column=0, padx=10)
+            self.entry = customtkinter.CTkLabel(self, text=item["pos_item"])
+            self.entry.grid(row=n, column=1, padx=10)
+            self.textscript = customtkinter.CTkTextbox(self, )
+            self.textscript.grid(row=n, column=2, padx=10)
+            self.textscript.insert("0.0", item["text_item"])
+            n = n+1
+        self.button_add = customtkinter.CTkButton(self, text='Добавить скрипт', command=self.add_script())
+        self.button_add.grid(row=n+1, column=0, padx=10)
 
+    def add_script(self):
+        pass
 
 def main():
     # глобальные файлы, влкючение логирования
