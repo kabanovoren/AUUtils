@@ -14,7 +14,7 @@ def get_name_file(file):
     log_file = os.path.splitext(file)[0]+'.log'
     path = os.path.dirname(file)
     logger = _create_logs()
-    return [inifile, sqlfile, path, log_file, logger]
+    return [inifile, sqlfile, path, log_file, logger] 
 
 
 # Создание лога

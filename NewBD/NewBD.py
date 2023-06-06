@@ -98,6 +98,7 @@ class LevelScript(customtkinter.CTkToplevel, service.sql):
         self.button_add.grid(row=self.n, column=0, padx=10)
         self.button_save.grid(row=self.n, column=1, padx=10)
 
+
     def save_script(self):
         self.data_list = []
         for entry in self.list_entry:
