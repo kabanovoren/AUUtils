@@ -66,30 +66,36 @@ class LevelScript(customtkinter.CTkToplevel, service.sql):
         self.label3.grid(row=0, column=2, padx=10)
         self.n = 1
         self.list_entry = []
+        self.checkbox_pos = tkinter.IntVar(value=0)
         for item in data:
-            self.list_entry.append([customtkinter.CTkEntry(self, width=150),
-                                   customtkinter.CTkEntry(self, width=50),
-                                   customtkinter.CTkTextbox(self, width=370, height=50)]
-                                  )
+            self.list_entry.append([
+                # customtkinter.CTkCheckBox(self, variable=self.checkbox_pos, onvalue=0, text=''),
+                 customtkinter.CTkEntry(self, width=150),
+                 customtkinter.CTkEntry(self, width=50),
+                 customtkinter.CTkTextbox(self, width=370, height=50)]
+                )
 
         for entry in self.list_entry:
-            entry[0].insert(0, data[self.n-1]["name_item"])
-            entry[1].insert(0, data[self.n-1]["pos_item"])
-            entry[2].insert("0.0", data[self.n-1]["text_item"])
+            entry[0].insert(0, data[self.n - 1]["name_item"])
+            entry[1].insert(0, data[self.n - 1]["pos_item"])
+            entry[2].insert("0.0", data[self.n - 1]["text_item"])
+            # entry[0].grid(row=self.n, column=0, padx=5, pady=5)
             entry[0].grid(row=self.n, column=0, padx=5, pady=5)
             entry[1].grid(row=self.n, column=1, padx=5, pady=5)
             entry[2].grid(row=self.n, column=2, padx=5, pady=5)
             self.n = self.n + 1
         self.button_add = customtkinter.CTkButton(self, text='Добавить скрипт', command=self.add_script)
         self.button_add.grid(row=self.n, column=0, padx=10)
+        # self.button_del = customtkinter.CTkButton(self, tex='Удалить выбранный скрипт', command=self.del_script())
+        # self.button_del.grid(row=self.n, column=1, padx=10)
         self.button_save = customtkinter.CTkButton(self, text='Сохранить изменения', command=self.save_script)
         self.button_save.grid(row=self.n, column=1, padx=10)
 
     def add_script(self):
         self.list_entry.append([customtkinter.CTkEntry(self, width=150),
-                               customtkinter.CTkEntry(self, width=50),
-                               customtkinter.CTkTextbox(self, width=370, height=50)]
-                              )
+                                customtkinter.CTkEntry(self, width=50),
+                                customtkinter.CTkTextbox(self, width=370, height=50)]
+                               )
         for entry in self.list_entry:
             entry[0].grid(row=self.n, column=0, padx=5, pady=5)
             entry[1].grid(row=self.n, column=1, padx=5, pady=5)
@@ -98,6 +104,8 @@ class LevelScript(customtkinter.CTkToplevel, service.sql):
         self.button_add.grid(row=self.n, column=0, padx=10)
         self.button_save.grid(row=self.n, column=1, padx=10)
 
+    def del_script(self):
+        pass
 
     def save_script(self):
         self.data_list = []
@@ -108,11 +116,6 @@ class LevelScript(customtkinter.CTkToplevel, service.sql):
                  'text_item': entry[2].get(1.0)}
             )
         self.sql.save_file_sql(self.data_list)
-
-
-
-
-
 
 
 def main():

@@ -14,7 +14,7 @@ def get_name_file(file):
     log_file = os.path.splitext(file)[0]+'.log'
     path = os.path.dirname(file)
     logger = _create_logs()
-    return [inifile, sqlfile, path, log_file, logger] 
+    return [inifile, sqlfile, path, log_file, logger]
 
 
 # Создание лога
@@ -43,7 +43,7 @@ def get_setting_bd(inifile=''):
     host_str = bd_str[0]
     port = host_str.partition('/')[2]
     if port == '':
-        port = 3050
+        port = 3052
     host = host_str.partition('/')[0]
     fbclient = f'{os.path.dirname(os.getcwd())}\\Service\\fbclient.dll'
     config = c.ConfigParser()
@@ -61,12 +61,11 @@ def get_setting_bd(inifile=''):
         port = config['BD']['port']
         fbclient = config['BD']['fbclient']
     except Exception as ex:
-        logs(f'INI файл не найден, путь БД из реестра {ex}')
+        logs(f'INI файл {inifile} не найден, путь БД из реестра {ex}')
     logs(f'База данных:{bd} Хост:{host} Порт: {str(port)} {fbclient}')
     return bd, host, int(port), fbclient
 
-
-def connect_fdb(setting):
+def connect_fdb(setting=''):
     bd, host, port, fbclient = get_setting_bd(setting)
     try:
         con = fdb.connect(database=bd, user='sysdba', password='masterkey',
@@ -126,13 +125,14 @@ class sql():
             if line == sql:
                 return sql
 def main():
-    get_name_file(__file__)
-    s = sql()
-    s.save_file_sql([{'name_item':'fdsf','pos_item':'fdafd','text_item':'qwerer'},
-                     {'name_item':'Второй пример','pos_item':'1,2','text_item':'select * from prep where id_prep =34'}])
-    data = s.load_file_sql()
-    print(data)
-    # print(sql.get_sql('fdb_service'))
+    pass
+    # get_name_file(__file__)
+    # s = sql()
+    # s.save_file_sql([{'name_item':'fdsf','pos_item':'fdafd','text_item':'qwerer'},
+    #                  {'name_item':'Второй пример','pos_item':'1,2','text_item':'select * from prep where id_prep =34'}])
+    # data = s.load_file_sql()
+    # print(data)
+    # # print(sql.get_sql('fdb_service'))
 
 
 if __name__ == '__main__':
