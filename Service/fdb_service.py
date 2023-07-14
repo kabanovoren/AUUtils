@@ -34,7 +34,7 @@ def logs(message):
     logger.info(message)
     print(message)
 
-def get_setting_bd(inifile=''):
+def get_setting_bd(inifile='', path=''):
     key = OpenKey(HKEY_CURRENT_USER, r'SOFTWARE\Aurit\По умолчанию', 0, KEY_ALL_ACCESS)
     bd_key = QueryValueEx(key, "DatabaseFile")
     bd_str = bd_key[0]
@@ -43,9 +43,11 @@ def get_setting_bd(inifile=''):
     host_str = bd_str[0]
     port = host_str.partition('/')[2]
     if port == '':
-        port = 3052
+        port = 3050
     host = host_str.partition('/')[0]
     fbclient = f'{os.path.dirname(os.getcwd())}\\Service\\fbclient.dll'
+    if not os.path.exists(fbclient):
+        fbclient = f'{path}\\Service\\fbclient.dll'
     config = c.ConfigParser()
     config.read(inifile)
     try:
@@ -65,8 +67,8 @@ def get_setting_bd(inifile=''):
     logs(f'База данных:{bd} Хост:{host} Порт: {str(port)} {fbclient}')
     return bd, host, int(port), fbclient
 
-def connect_fdb(setting=''):
-    bd, host, port, fbclient = get_setting_bd(setting)
+def connect_fdb(setting='', path=''):
+    bd, host, port, fbclient = get_setting_bd(setting, path)
     try:
         con = fdb.connect(database=bd, user='sysdba', password='masterkey',
                           charset='win1251', host=host, port=port, fb_library_name=fbclient)

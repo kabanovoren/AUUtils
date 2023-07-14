@@ -5,6 +5,7 @@ import Service.fdb_service as service
 import script
 import pandas as pd
 import configparser as c
+import fdb
 
 class MainForm(customtkinter.CTk):
     def __init__(self, *args, **kwargs):
@@ -50,7 +51,7 @@ class MainForm(customtkinter.CTk):
             self.export_script()
 
     def export_script(self):
-        self.con = service.connect_fdb(inifile)
+        self.con = service.connect_fdb(inifile, path)
         # self.id_depart = self.cbDepart.get()
         # x = self.id_depart.find("[")+1
         # y = self.id_depart.find("]")
@@ -81,6 +82,8 @@ def main():
     # глобальные файлы, влкючение логирования
     global inifile, sqlfile, path, log_file, logger
     inifile, sqlfile, path, log_file, logger = service.get_name_file(__file__)
+    if not os.path.exists(f'{path}/script/'):
+        os.mkdir(f'{path}/script/')
     # запуск формы отображения
     app = MainForm()
     app.mainloop()
