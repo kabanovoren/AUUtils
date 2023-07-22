@@ -48,17 +48,11 @@ def get_setting_bd(inifile='', path=''):
     fbclient = f'{os.path.dirname(os.getcwd())}\\Service\\fbclient.dll'
     if not os.path.exists(fbclient):
         fbclient = f'{path}\\Service\\fbclient.dll'
+    logs(fbclient)
     config = c.ConfigParser()
     config.read(inifile)
     try:
-        path = config['BD']['path']
-        if path != '':
-            bd = []
-            bd_file = os.listdir(path=path)
-            for database in bd_file:
-                bd.append(path + database)
-        if config['BD']['DatabaseName'] != '':
-            bd.append([config['BD']['DatabaseName']])
+        bd = config['BD']['DatabaseName']
         host = config['BD']['host']
         port = config['BD']['port']
         fbclient = config['BD']['fbclient']

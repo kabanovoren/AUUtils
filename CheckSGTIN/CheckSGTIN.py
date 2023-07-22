@@ -34,20 +34,54 @@ class MainForm(customtkinter.CTk):
         self.label_one.grid(row=4, column=0, padx=20, pady=10)
 
     def set_check_sgtin(self):
-        pass
+        self.con = service.connect_fdb(inifile, path)
+        text = self.memoSGTIN.get("0.0", "end")
+        self.list_text = text.split()
+        for line in self.list_text:
+            self.con.execute(script.SQL["ins_upd_sgtin"] % str(line))
+        self.con.execute(script.SQL["upd_mdlp_doc_14"])
+        self.con.transaction.commit()
+        service.disconnect_fdb(self.con)
 
     def export(self):
-        pass
+        text = self.memoSGTIN.get("0.0", "end")
+        self.list_text = text.split()
+        select_sgtin_list = []
+        self.con = service.connect_fdb(inifile, path)
+        for line in self.list_text:
+            select_sgtin = self.con.execute(script.SQL["select_sgtin"] % str(line)).fetchall()
+            select_sgtin_list.append(select_sgtin)
+        service.disconnect_fdb(self.con)
+        self.save_excel(select_sgtin_list)
+
+
+    def save_excel(self, cur_dict):
+        body = []
+        titel = ["SGTIN", "Статус", "Место деятельности", "Дата последней операции", "Срок годности", "Серия", "Дата загрузки информации"]
+        service.logs(f"Количество записей:{len(cur_dict)}")
+        for list in cur_dict:
+            for line in list:
+                service.logs(line)
+                body.append(line)
+        try:
+            excel = pd.DataFrame.from_records(body, columns=titel)
+            excel.to_excel(f"Check_SGTIN.xlsx", index=False)
+            service.logs("Файл сохранен Check_SGTIN.xlsx")
+        except:
+            service.logs("Не смог соханить файл Check_SGTIN.xlsx")
 
 def main():
-    # глобальные файлы, влкючение логирования
-    global inifile, sqlfile, path, log_file, logger
-    inifile, sqlfile, path, log_file, logger = service.get_name_file(__file__)
-    if not os.path.exists(f'{path}/script/'):
-        os.mkdir(f'{path}/script/')
-    # запуск формы отображения
-    app = MainForm()
-    app.mainloop()
+    try:
+        # глобальные файлы, влкючение логирования
+        global inifile, sqlfile, path, log_file, logger
+        inifile, sqlfile, path, log_file, logger = service.get_name_file(__file__)
+        if not os.path.exists(f'{path}/script/'):
+            os.mkdir(f'{path}/script/')
+        # запуск формы отображения
+        app = MainForm()
+        app.mainloop()
+    except Exception as ex:
+        service.logs(ex)
 
 
 if __name__ == '__main__':
