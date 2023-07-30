@@ -1,5 +1,7 @@
+"""Утилита, для отправки на проверку SGTIN в МДЛП, через АУ и далее сохранение данных в excel."""
+
 import os
-import customtkinter
+from customtkinter import CTkButton, CTkTextbox, CTkLabel, CTk
 import tkinter
 import Service.fdb_service as service
 import script
@@ -7,7 +9,8 @@ import pandas as pd
 import configparser as c
 import fdb
 
-class MainForm(customtkinter.CTk):
+
+class MainForm(CTk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("300x460")
@@ -21,16 +24,16 @@ class MainForm(customtkinter.CTk):
             pass
         self.path = f"{path}\\script\\"
         self.list_script = os.listdir(path=self.path)
-        self.label_text = customtkinter.CTkLabel(master=self, text="Список SGTIN для проверки")
+        self.label_text = CTkLabel(master=self, text="Список SGTIN для проверки")
         self.label_text.grid(row=0, column=0, padx=20, pady=10)
-        self.memoSGTIN = customtkinter.CTkTextbox(master=self, width=260)
+        self.memoSGTIN = CTkTextbox(master=self, width=260)
         self.memoSGTIN.grid(row=1, column=0, padx=20, pady=0)
-        self.set_check = customtkinter.CTkButton(master=self, text="На проверку", command=self.set_check_sgtin)
+        self.set_check = CTkButton(master=self, text="На проверку", command=self.set_check_sgtin)
         self.set_check.grid(row=2, column=0, padx=20, pady=10)
-        self.btnexpornalic = customtkinter.CTkButton(master=self, text="Экспорт в xlsx", command=self.export)
+        self.btnexpornalic = CTkButton(master=self, text="Экспорт в xlsx", command=self.export)
         self.btnexpornalic.grid(row=3, column=0, padx=20, pady=10)
         self.check_connect_fdb = service.get_setting_bd(inifile)[0]
-        self.label_one = customtkinter.CTkLabel(self, text=f"БД:{self.check_connect_fdb}")
+        self.label_one = CTkLabel(self, text=f"БД:{self.check_connect_fdb}")
         self.label_one.grid(row=4, column=0, padx=20, pady=10)
 
     def set_check_sgtin(self):
@@ -54,10 +57,10 @@ class MainForm(customtkinter.CTk):
         service.disconnect_fdb(self.con)
         self.save_excel(select_sgtin_list)
 
-
     def save_excel(self, cur_dict):
         body = []
-        titel = ["SGTIN", "Статус", "Место деятельности", "Дата последней операции", "Срок годности", "Серия", "Дата загрузки информации"]
+        titel = ["SGTIN", "Статус", "Место деятельности", "Дата последней операции", "Срок годности", "Серия",
+                 "Дата загрузки информации"]
         service.logs(f"Количество записей:{len(cur_dict)}")
         for list in cur_dict:
             for line in list:
@@ -69,6 +72,7 @@ class MainForm(customtkinter.CTk):
             service.logs("Файл сохранен Check_SGTIN.xlsx")
         except:
             service.logs("Не смог соханить файл Check_SGTIN.xlsx")
+
 
 def main():
     try:

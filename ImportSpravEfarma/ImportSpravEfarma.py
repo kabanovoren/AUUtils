@@ -1,3 +1,5 @@
+""" Скрипт для загрузки справочника товаров в АУ из файла CSV. Справочник выбран из Ефармы. """
+
 import os
 import Service.fdb_service as service
 import script
@@ -13,6 +15,7 @@ def get_file():
         for row in reader:
             data.append(row)
     return data
+
 
 def clear_bd(inifile, path):
     con = service.connect_fdb(inifile, path)
@@ -59,7 +62,8 @@ def insert_sprav(inifile, path, sprav):
                 is_otech = 0
             id_firm = con.execute(script.SQL["firm"] % (row[2].replace("'", "''"), id_country, is_otech)).fetchone()[0]
 
-        id_prep = con.execute(script.SQL["prep"] % (row[0].replace("'", "''"), id_cs4, id_farmgroup, name_cs4)).fetchone()[0]
+        id_prep = \
+        con.execute(script.SQL["prep"] % (row[0].replace("'", "''"), id_cs4, id_farmgroup, name_cs4)).fetchone()[0]
         con.execute(script.SQL["tovar"] % (row[4][:13], id_prep, id_firm))
         con.transaction.commit()
     service.disconnect_fdb(con)
@@ -72,7 +76,6 @@ def main():
     data = get_file()
     clear_bd(inifile, path)
     insert_sprav(inifile, path, data)
-
 
 
 if __name__ == '__main__':

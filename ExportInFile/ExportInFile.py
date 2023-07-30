@@ -1,3 +1,5 @@
+""" Сохранение из АУ в excel. Скрипты select складываем в папку script. Запускаем утилиту, выбираем скрипт,
+нажимаем "Экспорт". Результат сохраняется в папке директроии проекта. """
 import os
 import customtkinter
 import tkinter
@@ -6,6 +8,7 @@ import script
 import pandas as pd
 import configparser as c
 import fdb
+
 
 class MainForm(customtkinter.CTk):
     def __init__(self, *args, **kwargs):
@@ -32,8 +35,9 @@ class MainForm(customtkinter.CTk):
         self.list_script = os.listdir(path=self.path)
         # self.list_script.append("Выгрузка наличия")
         self.cbexport = customtkinter.CTkComboBox(master=self, values=self.list_script, width=430)
-        self.cbexport.grid(row=1, column=0, padx=20, pady=10,)
-        self.checknamerow = customtkinter.CTkCheckBox(master=self, onvalue=True, offvalue=False, text="Выгружать названия колонок")
+        self.cbexport.grid(row=1, column=0, padx=20, pady=10, )
+        self.checknamerow = customtkinter.CTkCheckBox(master=self, onvalue=True, offvalue=False,
+                                                      text="Выгружать названия колонок")
         self.checknamerow.grid(row=2, column=0, padx=20, pady=10)
         self.btnexpornalic = customtkinter.CTkButton(master=self, text="Экспорт в xlsx", command=self.export)
         self.btnexpornalic.grid(row=3, column=0, padx=20, pady=10)
@@ -71,7 +75,7 @@ class MainForm(customtkinter.CTk):
     def export_nalic(self):
         self.con = service.connect_fdb(inifile)
         self.id_depart = self.cbDepart.get()
-        x = self.id_depart.find("[")+1
+        x = self.id_depart.find("[") + 1
         y = self.id_depart.find("]")
         self.cur_dict = self.con.execute(script.SQL["get_nalic_evotor"] % int(self.id_depart[x:y]))
         self.save_excel(self.cur_dict)
