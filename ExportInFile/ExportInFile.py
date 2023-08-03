@@ -45,6 +45,8 @@ class MainForm(customtkinter.CTk):
         self.label_one = customtkinter.CTkLabel(self, text=f"БД:{self.check_connect_fdb}")
         self.label_one.grid(row=4, column=0, padx=20, pady=10)
 
+
+
     def on_close(self):
         print("Окно закрываем")
 
