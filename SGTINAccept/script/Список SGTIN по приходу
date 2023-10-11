@@ -1,0 +1,12 @@
+select
+  MS.SGTIN from
+  DOC D
+inner join POSDOC P on P.ID_DOC = D.ID_DOC
+inner join MDLP_POS MP on MP.ID_POSDOC = P.ID_POSDOC
+inner join MDLP_SGTIN MS on MS.PRIM = MP.ID_SGTIN
+where D.ID_DEPART = :ID_DEPART
+      and D.ID_CLIENT_FROM = :ID_CLIENT
+      and D.ID_OPER = :ID_OPER
+      and D.DATE_DOC between :DATE1 and :DATE2
+
+group by 1

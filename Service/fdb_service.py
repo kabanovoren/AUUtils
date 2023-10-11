@@ -64,6 +64,9 @@ def get_setting_bd(inifile='', path=''):
 def connect_fdb(setting='', path=''):
     bd, host, port, fbclient = get_setting_bd(setting, path)
     try:
+        # Подключение к СМ (меняем пароль, остальные настройки в ini)
+        # con = fdb.connect(database=bd, user='sysdba', password='wpn47L',
+        #                   charset='win1251', host=host, port=port, fb_library_name=fbclient)
         con = fdb.connect(database=bd, user='sysdba', password='masterkey',
                           charset='win1251', host=host, port=port, fb_library_name=fbclient)
         logs(f'=========Подключение к {bd} УСПЕШНО!=========')
