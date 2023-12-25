@@ -1,0 +1,150 @@
+{
+	"start_page": "https://grls.rosminzdrav.ru/pricelims.aspx",
+	"tmp_path": "D:/Python/AUUtils/TMP/",
+	"result_file": "D:/Python/AUUtils/TMP/reestr.txt",
+	"md5_file": "D:/Python/AUUtils/TMP/reestr.zip.md5",
+	"copy_file": [
+		"D:/Python/AUUtils/TMP/TMP2/",
+		"D:/Python/AUUtils/TMP/TMP/"
+	],
+	"send_by_email": "1",
+	"emails": {
+		"email_addr": "apteka@aptekaural.ru",
+		"host": "mail.netangels.ru",
+		"password": "HGfdrtbG455Hjkl",
+		"addr_to": "silver-ralf@mail.ru",
+		"subject": "Новый реестр. Последняя дата вступления в силу: [LastData]"
+	},
+	"file_parse_params": [
+		{
+			"sheet": {
+				"start_line": "4",
+				"num_sheet": "0",
+				"name_sheet": "Действующие"
+			},
+			"columns": {
+				"NAME_MNN": "0",
+				"NAME_TOVAR": "1",
+				"FORM": "2",
+				"NAME_FIRM": "3",
+				"KOL": "5",
+				"CENA_GR": "6",
+				"NUM_REG_UDOST": "8",
+				"DATA_REG_UDOST": "9",
+				"EAN13": "10",
+				"CENA_GR_DOL": "6",
+				"VALUT": "7",
+				"DATE_FROM": "11",
+				"CODE_ATX": "4",
+				"DATE_PUBL": "-2",
+				"EXCEPT": "-1",
+				"DATE_EXCEPT": "-1"
+			},
+			"formats": {
+				"NAME_MNN": "C",
+				"NAME_TOVAR": "C",
+				"FORM": "C",
+				"NAME_FIRM": "C",
+				"KOL": "N",
+				"CENA_GR": "N",
+				"NUM_REG_UDOST": "C",
+				"DATA_REG_UDOST": "С",
+				"EAN13": "C",
+				"CENA_GR_DOL": "N",
+				"VALUT": "C",
+				"DATE_FROM": "D",
+				"CODE_ATX": "C",
+				"DATE_PUBL": "D",
+				"EXCEPT": "C",
+				"DATE_EXCEPT": "D"
+			}
+		},
+				{
+			"sheet": {
+				"start_line": "4",
+				"num_sheet": "1",
+				"name_sheet": "Измененные"
+			},
+			"columns": {
+				"NAME_MNN": "0",
+				"NAME_TOVAR": "1",
+				"FORM": "2",
+				"NAME_FIRM": "3",
+				"KOL": "5",
+				"CENA_GR": "6",
+				"NUM_REG_UDOST": "8",
+				"DATA_REG_UDOST": "9",
+				"EAN13": "10",
+				"CENA_GR_DOL": "6",
+				"VALUT": "7",
+				"DATE_FROM": "11",
+				"CODE_ATX": "4",
+				"DATE_PUBL": "-2",
+				"EXCEPT": "-1",
+				"DATE_EXCEPT": "-1"
+			},
+			"formats": {
+				"NAME_MNN": "C",
+				"NAME_TOVAR": "C",
+				"FORM": "C",
+				"NAME_FIRM": "C",
+				"KOL": "N",
+				"CENA_GR": "N",
+				"NUM_REG_UDOST": "C",
+				"DATA_REG_UDOST": "С",
+				"EAN13": "C",
+				"CENA_GR_DOL": "N",
+				"VALUT": "C",
+				"DATE_FROM": "D",
+				"CODE_ATX": "C",
+				"DATE_PUBL": "D",
+				"EXCEPT": "C",
+				"DATE_EXCEPT": "D"
+			}
+		},
+		{
+			"sheet": {
+				"start_line": "4",
+				"num_sheet": "2",
+				"name_sheet": "Исключенные"
+			},
+			"columns": {
+				"NAME_MNN": "0",
+				"NAME_TOVAR": "1",
+				"FORM": "2",
+				"NAME_FIRM": "3",
+				"KOL": "5",
+				"CENA_GR": "6",
+				"NUM_REG_UDOST": "8",
+				"DATA_REG_UDOST": "9",
+				"EAN13": "10",
+				"CENA_GR_DOL": "6",
+				"VALUT": "7",
+				"DATE_FROM": "12",
+				"CODE_ATX": "4",
+				"DATE_PUBL": "-2",
+				"EXCEPT": "11",
+				"DATE_EXCEPT": "12"
+			},
+			"formats": {
+				"NAME_MNN": "C",
+				"NAME_TOVAR": "C",
+				"FORM": "C",
+				"NAME_FIRM": "C",
+				"KOL": "N",
+				"CENA_GR": "N",
+				"NUM_REG_UDOST": "C",
+				"DATA_REG_UDOST": "С",
+				"EAN13": "C",
+				"CENA_GR_DOL": "N",
+				"VALUT": "C",
+				"DATE_FROM": "D",
+				"CODE_ATX": "C",
+				"DATE_PUBL": "D",
+				"EXCEPT": "C",
+				"DATE_EXCEPT": "D"
+			}
+		}
+
+	]
+}

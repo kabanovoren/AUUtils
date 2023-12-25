@@ -1,10 +1,11 @@
 """Утилита, для создание схем акцептирования по 601 уведомлениям и далее документам списания и не только"""
 import time
+import tkinter
 
 import customtkinter
 import datetime
 import os
-from customtkinter import CTkButton, CTkTextbox, CTkLabel, CTk, CTkComboBox, CTkFrame, CTkEntry, CTkFont, CTkCheckBox
+from customtkinter import CTkButton, CTkTextbox, CTkLabel, CTk, CTkComboBox, CTkFrame, CTkEntry, CTkFont, CTkCheckBox, CTkTabview
 import tkcalendar
 import Service.fdb_service as service
 import script
@@ -25,7 +26,7 @@ from threading import Thread
 class MainForm(CTk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.geometry("900x600")
+        self.geometry("980x600")
         self.title("Выгрузка данных в Эксель")
         """Показать данные по департнику"""
         """чмтаем ini """
@@ -36,17 +37,39 @@ class MainForm(CTk):
             pass
         self.path_out = f"{path}\\out\\"
         self.path_xsd = f"{path}\\xsd\\"
-        self.TopFrame = CTkFrame(master=self, width=800)
+
+        self.TopFrame = CTkFrame(master=self, width=960)
         self.TopFrame.grid(row=0, column=0, )
 
-        self.label_text = CTkLabel(master=self.TopFrame, text="Список SGTIN для проверки и формирование схем")
-        self.label_text.grid(row=0, column=0, padx=10, pady=10)
-        fonttext = CTkFont(family='Courier New')
-        self.memoSGTIN = CTkTextbox(master=self.TopFrame, width=420, font=fonttext)
-        self.memoSGTIN.grid(row=1, column=0, padx=10, pady=0)
+        self.FrameElement = CTkFrame(master=self, width=980)
+        self.FrameElement.grid(row=4, column=0)
 
-        self.FrameAU = CTkFrame(master=self.TopFrame)
-        self.FrameAU.grid(row=1, column=1, padx=0, pady=0)
+        self.label_text = CTkLabel(master=self.TopFrame, text="Список SGTIN для проверки и формирование схем")
+        self.label_text.grid(row=0, column=0, padx=0, pady=0, )
+
+        fonttext = CTkFont(family='Courier New')
+        self.memoSGTIN = CTkTextbox(master=self.TopFrame, width=480, font=fonttext)
+        self.memoSGTIN.grid(row=1, column=0, padx=10, pady=0)
+        # self.memoSGTIN.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
+
+        self.TabViwe = CTkTabview(master=self.TopFrame)
+        self.TabViwe.grid(row=1, column=1, padx=0, pady=0)
+
+        self.TabViwe.add(name="АУ")
+        self.TabViwe.add(name="1C")
+
+        self.FrameAU = CTkFrame(master=self.TabViwe.tab("АУ"), width=480)
+        self.FrameAU.grid(row=0, column=0, padx=0, pady=0)
+
+        self.Frame1C = CTkFrame(master=self.TabViwe.tab("1C"), width=480)
+        self.Frame1C.grid(row=0, column=0, padx=0, pady=0)
+
+        # Кнопки для 1С
+        self.set_check = CTkButton(master=self.Frame1C, text="На проверку",
+                                   command=lambda: Thread(target=self.set_check_sgtin).start())
+        self.set_check.grid(row=1, column=1, padx=10, pady=10)
+
+
         self.path_script = f"{path}\\script\\"
         self.list_script = os.listdir(path=self.path_script)
         self.sql_var = customtkinter.StringVar(value="_")
@@ -86,8 +109,9 @@ class MainForm(CTk):
         self.set_check = CTkButton(master=self.FrameAU, text="Сформировать схему", command=self.create_xml)
         self.set_check.grid(row=3, column=1, padx=10, pady=10)
 
-        self.FrameElement = CTkFrame(master=self, width=884)
-        self.FrameElement.grid(row=4, column=0)
+
+
+
 
     def cansel_prov(self):
         self.Obj = dict(run=False)
