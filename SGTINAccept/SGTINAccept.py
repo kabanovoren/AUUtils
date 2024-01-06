@@ -1,19 +1,20 @@
 """Утилита, для создание схем акцептирования по 601 уведомлениям и далее документам списания и не только"""
 import time
 import tkinter
+import xml.etree.ElementTree as ET
 
 import customtkinter
 import datetime
 import os
 from customtkinter import CTkButton, CTkTextbox, CTkLabel, CTk, CTkComboBox, CTkFrame, CTkEntry, CTkFont, CTkCheckBox, CTkTabview
 import tkcalendar
+from tkinter import filedialog
 import Service.fdb_service as service
 import script
 import pandas as pd
 import configparser as c
 import re
 import fdb
-import xsd2xml
 from lxml import etree
 import xmlschema
 import json
@@ -21,6 +22,7 @@ from xml.etree.ElementTree import ElementTree
 from xmlschema.validators import XsdAtomicRestriction, XsdElement
 from pprint import pprint
 from threading import Thread
+import work1C as w1C
 
 
 class MainForm(CTk):
@@ -38,22 +40,26 @@ class MainForm(CTk):
         self.path_out = f"{path}\\out\\"
         self.path_xsd = f"{path}\\xsd\\"
 
-        self.TopFrame = CTkFrame(master=self, width=960)
+        self.TopFrame = CTkFrame(master=self, width=980)
         self.TopFrame.grid(row=0, column=0, )
 
         self.FrameElement = CTkFrame(master=self, width=980)
         self.FrameElement.grid(row=4, column=0)
 
-        self.label_text = CTkLabel(master=self.TopFrame, text="Список SGTIN для проверки и формирование схем")
-        self.label_text.grid(row=0, column=0, padx=0, pady=0, )
+        self.LeftTopFrame = CTkFrame(master=self.TopFrame)
+        self.LeftTopFrame.grid(row=0, column=0, )
 
+        self.label_text = CTkLabel(master=self.LeftTopFrame, text="Список SGTIN для проверки и формирование схем")
+        self.label_text.grid(row=0, column=0, padx=0, pady=0, )
         fonttext = CTkFont(family='Courier New')
-        self.memoSGTIN = CTkTextbox(master=self.TopFrame, width=480, font=fonttext)
+        self.memoSGTIN = CTkTextbox(master=self.LeftTopFrame, width=480, font=fonttext)
         self.memoSGTIN.grid(row=1, column=0, padx=10, pady=0)
-        # self.memoSGTIN.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
+        self.check_connect_fdb = service.get_setting_bd(inifile)[0]
+        self.label_BD = CTkLabel(master=self.LeftTopFrame, text=f"БД:{self.check_connect_fdb}")
+        self.label_BD.grid(row=2, column=0, padx=10, pady=10)
 
         self.TabViwe = CTkTabview(master=self.TopFrame)
-        self.TabViwe.grid(row=1, column=1, padx=0, pady=0)
+        self.TabViwe.grid(row=0, column=1, padx=0, pady=0)
 
         self.TabViwe.add(name="АУ")
         self.TabViwe.add(name="1C")
@@ -68,6 +74,13 @@ class MainForm(CTk):
         self.set_check = CTkButton(master=self.Frame1C, text="На проверку",
                                    command=lambda: Thread(target=self.set_check_sgtin).start())
         self.set_check.grid(row=1, column=1, padx=10, pady=10)
+        self.open_file = CTkButton(master=self.Frame1C, text="Загрузить из файла",
+                                   command=self.open_file1C)
+        self.open_file.grid(row=0, column=1, padx=10, pady=10)
+        self.open_file = CTkButton(master=self.Frame1C, text="Удалить данные из БД",
+                                   command=self.delete_data)
+        self.open_file.grid(row=2, column=1, padx=10, pady=10)
+
 
 
         self.path_script = f"{path}\\script\\"
@@ -88,10 +101,6 @@ class MainForm(CTk):
         self.set_check = CTkButton(master=self.FrameAU, text="Заполнить цены", command=self.set_cost_sgtin)
         self.set_check.grid(row=2, column=1, padx=10, pady=10)
 
-        self.check_connect_fdb = service.get_setting_bd(inifile)[0]
-        self.label_one = CTkLabel(master=self.FrameAU, text=f"БД:{self.check_connect_fdb}")
-        self.label_one.grid(row=4, column=0, padx=10, pady=10)
-
         self.check_xsd_occus = CTkCheckBox(master=self.FrameAU, text=f"Необязательные теги", onvalue=False,
                                            offvalue=True)
         self.check_xsd_occus.grid(row=4, column=1, padx=10, pady=10)
@@ -109,9 +118,25 @@ class MainForm(CTk):
         self.set_check = CTkButton(master=self.FrameAU, text="Сформировать схему", command=self.create_xml)
         self.set_check.grid(row=3, column=1, padx=10, pady=10)
 
-
-
-
+    def delete_data(self):
+        self.con = service.connect_fdb(inifile, path)
+        w1C.delete_data(self.con)
+        service.disconnect_fdb(self.con)
+    def inset_sgtin1C(self):
+        dict_sgtin = w1C.open_file1C(self.xml)
+        sgtins_doc = w1C.create_xml(dict_sgtin)
+        self.con = service.connect_fdb(inifile, path)
+        w1C.insert_into_fdb(self.con, sgtins_doc)
+        service.disconnect_fdb(self.con)
+    def open_file1C(self):
+        self.xml = filedialog.askopenfile().name
+        dict_sgtin = w1C.open_file1C(self.xml)
+        self.memoSGTIN.delete("0.0", "end")
+        n = 0
+        for sgtin in dict_sgtin:
+            self.memoSGTIN.insert(f"0.{n}", f"{sgtin['sales']['union']['detail']['sgtin']}\n")
+            n = n + 1
+        self.inset_sgtin1C()
 
     def cansel_prov(self):
         self.Obj = dict(run=False)
