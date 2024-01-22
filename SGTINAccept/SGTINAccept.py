@@ -6,7 +6,8 @@ import xml.etree.ElementTree as ET
 import customtkinter
 import datetime
 import os
-from customtkinter import CTkButton, CTkTextbox, CTkLabel, CTk, CTkComboBox, CTkFrame, CTkEntry, CTkFont, CTkCheckBox, CTkTabview
+from customtkinter import CTkButton, CTkTextbox, CTkLabel, CTk, CTkComboBox, CTkFrame, CTkEntry, CTkFont, CTkCheckBox, \
+    CTkTabview
 import tkcalendar
 from tkinter import filedialog
 import Service.fdb_service as service
@@ -71,17 +72,21 @@ class MainForm(CTk):
         self.Frame1C.grid(row=0, column=0, padx=0, pady=0)
 
         # Кнопки для 1С
-        self.set_check = CTkButton(master=self.Frame1C, text="На проверку",
-                                   command=lambda: Thread(target=self.set_check_sgtin).start())
-        self.set_check.grid(row=1, column=1, padx=10, pady=10)
-        self.open_file = CTkButton(master=self.Frame1C, text="Загрузить из файла",
-                                   command=self.open_file1C)
-        self.open_file.grid(row=0, column=1, padx=10, pady=10)
+        # self.set_check = CTkButton(master=self.Frame1C, text="На проверку",
+        #                            command=lambda: Thread(target=self.set_check_sgtin).start())
+        # self.set_check.grid(row=1, column=1, padx=10, pady=10)
+        self.open_file = CTkButton(master=self.Frame1C, text="Загрузить из файла и сформировать схемы",
+                                   command=lambda: Thread(target=self.open_file1C).start())
+        self.open_file.grid(row=2, column=1, padx=10, pady=10)
         self.open_file = CTkButton(master=self.Frame1C, text="Удалить данные из БД",
                                    command=self.delete_data)
-        self.open_file.grid(row=2, column=1, padx=10, pady=10)
-
-
+        self.open_file.grid(row=0, column=1, padx=10, pady=10)
+        self.lb_subject_id = CTkLabel(master=self.Frame1C, text="МД:")
+        self.lb_subject_id.grid(row=1, column=0, padx=10, pady=10)
+        self.subject_id = CTkEntry(master=self.Frame1C)
+        self.subject_id.grid(row=1, column=1, padx=10, pady=10)
+        self.lb_info_1C = CTkLabel(master=self.Frame1C, text="Статус:")
+        self.lb_info_1C.grid(row=3, column=1, padx=10, pady=10)
 
         self.path_script = f"{path}\\script\\"
         self.list_script = os.listdir(path=self.path_script)
@@ -104,8 +109,9 @@ class MainForm(CTk):
         self.check_xsd_occus = CTkCheckBox(master=self.FrameAU, text=f"Необязательные теги", onvalue=False,
                                            offvalue=True)
         self.check_xsd_occus.grid(row=4, column=1, padx=10, pady=10)
-        self.check_one_sgtin_in_xml = CTkCheckBox(master=self.FrameAU, text=f"Формировать 1 SGTIN/SSCC в схеме", onvalue=True,
-                                           offvalue=False)
+        self.check_one_sgtin_in_xml = CTkCheckBox(master=self.FrameAU, text=f"Формировать 1 SGTIN/SSCC в схеме",
+                                                  onvalue=True,
+                                                  offvalue=False)
         self.check_one_sgtin_in_xml.grid(row=5, column=0, padx=10, pady=10)
 
         # self.FrameXSD = CTkFrame(master=self)
@@ -119,16 +125,27 @@ class MainForm(CTk):
         self.set_check.grid(row=3, column=1, padx=10, pady=10)
 
     def delete_data(self):
+        self.lb_info_1C.configure(text="Статус: Запуск подготовики БД")
         self.con = service.connect_fdb(inifile, path)
         w1C.delete_data(self.con)
         service.disconnect_fdb(self.con)
-    def inset_sgtin1C(self):
-        dict_sgtin = w1C.open_file1C(self.xml)
-        sgtins_doc = w1C.create_xml(dict_sgtin)
+        self.lb_info_1C.configure(text="Статус: Подготовка БД выполнена")
+
+    def inset_sgtin1C(self, dict_sgtin):
+        # dict_sgtin = w1C.open_file1C(self.xml)
+        sgtins_doc = w1C.create_xml(dict_sgtin, self.subject_id.get())
+        self.lb_info_1C.configure(text="Статус: Вставка данных в БД")
         self.con = service.connect_fdb(inifile, path)
         w1C.insert_into_fdb(self.con, sgtins_doc)
         service.disconnect_fdb(self.con)
+        self.lb_info_1C.configure(text="Статус: Формирование документов выполнено")
+
     def open_file1C(self):
+        if len(self.subject_id.get()) == 0:
+            self.lb_info_1C.configure(text_color="red", text="Статус: Не заполнено МД")
+            return
+        self.lb_info_1C.configure(text_color="white")
+        self.lb_info_1C.configure(text="Статус: Формирование данных по SGTIN")
         self.xml = filedialog.askopenfile().name
         dict_sgtin = w1C.open_file1C(self.xml)
         self.memoSGTIN.delete("0.0", "end")
@@ -136,7 +153,7 @@ class MainForm(CTk):
         for sgtin in dict_sgtin:
             self.memoSGTIN.insert(f"0.{n}", f"{sgtin['sales']['union']['detail']['sgtin']}\n")
             n = n + 1
-        self.inset_sgtin1C()
+        self.inset_sgtin1C(dict_sgtin)
 
     def cansel_prov(self):
         self.Obj = dict(run=False)
@@ -306,7 +323,6 @@ class MainForm(CTk):
                     })
         return param_doc
 
-
     def get_xsd_document(self, document):
         """Загрузка xml"""
         schema = xmlschema.XMLSchema(document)
@@ -340,11 +356,11 @@ class MainForm(CTk):
         sgtins = {'order_details': {"union": sgtins}}
         return sgtins
 
-
     def save_xml(self, data, schema, name_file):
         xml = xmlschema.from_json(data, schema=schema, preserve_root=True)
-        ElementTree(xml).write(f'out/{name_file}_{datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}_{self.document[0]}.xml',
-                               encoding="UTF-8", xml_declaration=True)
+        ElementTree(xml).write(
+            f'out/{name_file}_{datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}_{self.document[0]}.xml',
+            encoding="UTF-8", xml_declaration=True)
 
     def create_json(self, dict_document, sscc_sgtin, sscc):
 
@@ -356,6 +372,7 @@ class MainForm(CTk):
         data.update(dict_header)
         data = json.dumps(data)
         return data
+
     def create_xml(self):
         """Создание xml"""
         schema = self.get_xsd_document(f"xsd/{self.xsd.get()}")
