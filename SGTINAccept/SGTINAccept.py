@@ -9,7 +9,7 @@ import os
 from customtkinter import CTkButton, CTkTextbox, CTkLabel, CTk, CTkComboBox, CTkFrame, CTkEntry, CTkFont, CTkCheckBox, \
     CTkTabview
 import tkcalendar
-from tkinter import filedialog
+from tkinter import filedialog, simpledialog
 import Service.fdb_service as service
 import script
 import pandas as pd
@@ -75,7 +75,7 @@ class MainForm(CTk):
         # self.set_check = CTkButton(master=self.Frame1C, text="На проверку",
         #                            command=lambda: Thread(target=self.set_check_sgtin).start())
         # self.set_check.grid(row=1, column=1, padx=10, pady=10)
-        self.open_file = CTkButton(master=self.Frame1C, text="Загрузить из файла и сформировать схемы",
+        self.open_file = CTkButton(master=self.Frame1C, text="Загрузить из папки и сформировать схемы",
                                    command=lambda: Thread(target=self.open_file1C).start())
         self.open_file.grid(row=2, column=1, padx=10, pady=10)
         self.open_file = CTkButton(master=self.Frame1C, text="Удалить данные из БД",
@@ -146,14 +146,26 @@ class MainForm(CTk):
             return
         self.lb_info_1C.configure(text_color="white")
         self.lb_info_1C.configure(text="Статус: Формирование данных по SGTIN")
-        self.xml = filedialog.askopenfile().name
-        dict_sgtin = w1C.open_file1C(self.xml)
         self.memoSGTIN.delete("0.0", "end")
+        path_file_xml = filedialog.askdirectory()
+        list_file = os.listdir(path_file_xml)
+        print(os.listdir(path_file_xml))
         n = 0
-        for sgtin in dict_sgtin:
-            self.memoSGTIN.insert(f"0.{n}", f"{sgtin['sales']['union']['detail']['sgtin']}\n")
-            n = n + 1
-        self.inset_sgtin1C(dict_sgtin)
+        for file in list_file:
+            dict_sgtin = w1C.open_file1C(f"{path_file_xml}/{file}")
+            for sgtin in dict_sgtin:
+                self.memoSGTIN.insert(f"0.{n}", f"{sgtin['sales']['union']['detail']['sgtin']}\n")
+                n = n + 1
+            self.inset_sgtin1C(dict_sgtin)
+        self.lb_info_1C.configure(text=f"Статус: Загрузка всех данных завершена! Кол-во:{n}")
+        # self.xml = filedialog.askopenfile().name
+        # dict_sgtin = w1C.open_file1C(self.xml)
+        # self.memoSGTIN.delete("0.0", "end")
+        #
+        # for sgtin in dict_sgtin:
+        #     self.memoSGTIN.insert(f"0.{n}", f"{sgtin['sales']['union']['detail']['sgtin']}\n")
+        #     n = n + 1
+        # self.inset_sgtin1C(dict_sgtin)
 
     def cansel_prov(self):
         self.Obj = dict(run=False)

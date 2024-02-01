@@ -42,9 +42,11 @@ def open_file1C(file):
         doc_number = sale_docs.find("doc_number").text
         doc_date = sale_docs.find("doc_date").text
         part = detail.findall("part")
-        list_sgtin = itertools.zip_longest(sgtins, costs, vat_values, part, fillvalue=None)
-        for sgtin, cost, vat_value, part in list_sgtin:
-            if part != None:
+        list_sgtin = itertools.zip_longest(part, sgtins, costs, vat_values, fillvalue=None)
+        for part, sgtin, cost, vat_value in list_sgtin:
+            if part is None:
+                continue
+            if part.text != '1':
                 data = {"operation_date": operation_date,
                         "sales": {"union": {"detail": {
                             "sgtin": sgtin.text, "cost": cost.text, "vat_value": vat_value.text,

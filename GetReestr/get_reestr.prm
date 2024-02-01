@@ -120,7 +120,7 @@
 				"EAN13": "10",
 				"CENA_GR_DOL": "6",
 				"VALUT": "7",
-				"DATE_FROM": "12",
+				"DATE_FROM": "-1",
 				"CODE_ATX": "4",
 				"DATE_PUBL": "-2",
 				"EXCEPT": "11",
